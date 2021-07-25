@@ -1,28 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <Editor
+      v-model="val"
+      @on-ready="onReady"
+      @on-copy="onCopy"
+      @on-upload-image="onUpladImage"
+      @on-save="onSave"
+      :height="500"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import Editor from '@/components/Editor';
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    HelloWorld,
+    Editor,
+  },
+  data: function () {
+    return {
+      val: '',
+    };
+  },
+  methods: {
+    onReady(data) {
+      console.log(data);
+    },
+    onCopy(text) {
+      console.log(text);
+    },
+    onUpladImage(file) {
+      console.log(file);
+    },
+    onSave(data) {
+      console.log(data);
+    },
   },
 };
 </script>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style lang="less"></style>
