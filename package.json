@@ -1,7 +1,17 @@
 {
-  "name": "xbear-editor",
+  "name": "xbear-markdown-editor",
+  "description": "A markdown editor based on Vue, Marked and CodeMirror.",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "author": {
+    "name": "Harry Xiong",
+    "email": "harryxiong24@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HarryXiong24/xbear-markdown-editor"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

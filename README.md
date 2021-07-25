@@ -1,4 +1,4 @@
-# xbear-editor
+# xbear-markdown-editor
 
 ## Project setup
 
