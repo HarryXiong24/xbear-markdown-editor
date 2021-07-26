@@ -174,12 +174,10 @@ export default {
       lastPos: '', // 光标最后所在位置
     };
   },
-
   mounted() {
     this.init();
     this.createEditor();
   },
-
   methods: {
     // 初始化
     init() {
@@ -210,7 +208,6 @@ export default {
         },
         ...codemirrorConfig,
       });
-
       this.addEditorLintener();
       this.$emit('on-ready', {
         vm: this,

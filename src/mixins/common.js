@@ -97,6 +97,7 @@ export default {
     };
   },
   computed: {
+    // tools 里的属性都用来通过配置判断对应功能是否在在顶部栏生效
     tools() {
       const { toolbars = {} } = this;
       return {
@@ -145,25 +146,6 @@ export default {
     importFile(event) {
       importFile(event);
     },
-    // 粘贴图片
-    handlePaste(_, e) {
-      const { clipboardData = {} } = e;
-      const { types = [], items } = clipboardData;
-      let item = null;
-      for (let i = 0; i < types.length; i++) {
-        if (types[i] === 'Files') {
-          item = items[i];
-          break;
-        }
-      }
-      if (item) {
-        const file = item.getAsFile();
-        if (/image/gi.test(file.type)) {
-          this.$emit('on-upload-image', file);
-          e.preventDefault();
-        }
-      }
-    },
     // 设置究竟是哪个半边在主动滑动
     mousescrollSide(side) {
       this.scrollSide = side;
@@ -185,6 +167,25 @@ export default {
           };
         }
       }, 600);
+    },
+    // 粘贴图片
+    handlePaste(_, e) {
+      const { clipboardData = {} } = e;
+      const { types = [], items } = clipboardData;
+      let item = null;
+      for (let i = 0; i < types.length; i++) {
+        if (types[i] === 'Files') {
+          item = items[i];
+          break;
+        }
+      }
+      if (item) {
+        const file = item.getAsFile();
+        if (/image/gi.test(file.type)) {
+          this.$emit('on-upload-image', file);
+          e.preventDefault();
+        }
+      }
     },
     // 预览图片
     previewImage(src) {
