@@ -1,7 +1,7 @@
-import hljs from '../assets/js/hightlight';
+import highlight from '../assets/js/highlight';
 import marked from '../assets/js/marked';
 
-hljs.initHighlightingOnLoad();
+highlight.initHighlightingOnLoad();
 
 const renderer = new marked.Renderer();
 
@@ -14,6 +14,6 @@ export default marked.setOptions({
   sanitize: false,
   smartLists: true,
   highlight: function (code) {
-    return hljs.highlightAuto(code).value;
+    return highlight.highlightAuto(code).value;
   },
 });
