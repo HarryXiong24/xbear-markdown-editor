@@ -169,8 +169,8 @@ import image from '@/mixins/image';
 import file from '@/mixins/file';
 
 // 调用配置的模块
-import marked from '@/config/marked';
-import defaultTools from '@/config/tools';
+import marked from '@/config/parse';
+import defaultTools from '@/config/toolbar';
 
 export default {
   name: 'xbear-markdown-editor',
