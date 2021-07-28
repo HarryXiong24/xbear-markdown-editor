@@ -1,5 +1,5 @@
-import highlight from '../assets/js/highlight';
-import marked from '../assets/js/marked';
+import highlight from '@/assets/js/highlight';
+import marked from '@/assets/js/marked';
 
 highlight.initHighlightingOnLoad();
 

@@ -163,10 +163,10 @@ import '@/assets/js/codemirror/styles/codemirror.css';
 
 // 调用混入的模块
 import base from '@/mixins/base';
-import hotKeyOperation from '@/mixins/hotKeyOperation';
-import themeOperation from '@/mixins/themeOperation';
-import imageOperation from '@/mixins/imageOperation';
-import fileOperation from '@/mixins/fileOperation';
+import hotKey from '@/mixins/hotKey';
+import theme from '@/mixins/theme';
+import image from '@/mixins/image';
+import file from '@/mixins/file';
 
 // 调用配置的模块
 import marked from '@/config/marked';
@@ -174,7 +174,7 @@ import defaultTools from '@/config/tools';
 
 export default {
   name: 'xbear-markdown-editor',
-  mixins: [base, hotKeyOperation, themeOperation, imageOperation, fileOperation],
+  mixins: [base, hotKey, theme, image, file],
   props: {
     value: {
       type: [String, Number],
@@ -190,57 +190,57 @@ export default {
       type: [Number, String],
       default: 'auto',
     },
+    // 初始化高度
     height: {
-      // 初始化高度
       type: Number,
       default: 600,
     },
+    // 工具栏
     toolbars: {
-      // 工具栏
       type: Object,
       default() {
         return {};
       },
     },
+    // 是否有边框
     bordered: {
-      //是否有边框
       type: Boolean,
       default: true,
     },
+    // 是否自动保存
     autoSave: {
-      // 是否自动保存
       type: Boolean,
       default: false,
     },
+    // 自动保存间隔 单位mm
     interval: {
-      // 自动保存间隔 mm
       type: Number,
       default: 10000,
     },
+    // 默认导出文件名称
     exportFileName: {
-      // 默认导出文件名称
       type: String,
       default: 'unnamed',
     },
+    // marked.js配置项
     markedOptions: {
-      //marked.js配置项
       type: Object,
       default() {
         return {};
       },
     },
+    // 复制代码
     copyCode: {
-      // 复制代码
       type: Boolean,
       default: true,
     },
+    // 复制代码按钮文字
     copyBtnText: {
-      // 复制代码按钮文字
       type: String,
       default: '复制代码',
     },
+    // 是否是预览模式
     isPreview: {
-      //是否是预览模式
       type: Boolean,
       default: false,
     },
@@ -260,14 +260,6 @@ export default {
       timerId: null, // 定时器id
       scrolling: true, // 同步滚动
       editorScrollHeight: 0,
-      // indexLength: 1,
-      // themeName: '',
-      // themeSlideDown: false,
-      // imgSlideDown: false,
-      // imgs: [],
-      // previewImgModal: false,
-      // previewImgSrc: '',
-      // previewImgMode: '',
     };
   },
   mounted() {

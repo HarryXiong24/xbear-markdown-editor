@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Editor
+    <xbear-editor
       v-model="val"
       @on-ready="onReady"
       @on-copy="onCopy"
@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import Editor from '@/components/Editor';
+import xbearEditor from '@/components/xbearEditor';
 
 export default {
   name: 'App',
   components: {
-    Editor,
+    xbearEditor,
   },
   data: function () {
     return {

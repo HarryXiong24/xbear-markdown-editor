@@ -1,4 +1,4 @@
-import { exportFile, importFile } from '@/utils/file';
+import { exportFile, importFile } from '@/utils/fileTools';
 
 export default {
   methods: {
