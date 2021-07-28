@@ -137,7 +137,7 @@
         :class="`markdown-preview ${'markdown-theme-' + themeName}`"
         ref="preview"
         @scroll="previewScroll"
-        @mouseenter="mousescrollSide('right')"
+        @mouseenter="mouseScrollSide('right')"
       >
         <div v-html="html" ref="previewInner"></div>
       </div>
@@ -163,21 +163,111 @@ import '@/assets/js/codemirror/styles/codemirror.css';
 
 // 调用混入的模块
 import base from '@/mixins/base';
+import hotKeyOperation from '@/mixins/hotKeyOperation';
 import themeOperation from '@/mixins/themeOperation';
 import imageOperation from '@/mixins/imageOperation';
 import fileOperation from '@/mixins/fileOperation';
 
 // 调用配置的模块
 import marked from '@/config/marked';
+import defaultTools from '@/config/tools';
 
 export default {
   name: 'xbear-markdown-editor',
-  mixins: [base, themeOperation, imageOperation, fileOperation],
+  mixins: [base, hotKeyOperation, themeOperation, imageOperation, fileOperation],
+  props: {
+    value: {
+      type: [String, Number],
+      default: '',
+    },
+    // 默认主题
+    theme: {
+      type: String,
+      default: 'light',
+    },
+    // 初始化宽度
+    width: {
+      type: [Number, String],
+      default: 'auto',
+    },
+    height: {
+      // 初始化高度
+      type: Number,
+      default: 600,
+    },
+    toolbars: {
+      // 工具栏
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    bordered: {
+      //是否有边框
+      type: Boolean,
+      default: true,
+    },
+    autoSave: {
+      // 是否自动保存
+      type: Boolean,
+      default: false,
+    },
+    interval: {
+      // 自动保存间隔 mm
+      type: Number,
+      default: 10000,
+    },
+    exportFileName: {
+      // 默认导出文件名称
+      type: String,
+      default: 'unnamed',
+    },
+    markedOptions: {
+      //marked.js配置项
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    copyCode: {
+      // 复制代码
+      type: Boolean,
+      default: true,
+    },
+    copyBtnText: {
+      // 复制代码按钮文字
+      type: String,
+      default: '复制代码',
+    },
+    isPreview: {
+      //是否是预览模式
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
-      pro: true,
       editor: null, // 编辑器实例
       lastPos: '', // 光标最后所在位置
+      currentValue: '', // 输入框内容
+      timeoutId: null,
+      html: '', // 预览的html
+      preview: false, // 是否是预览状态
+      split: true, //分屏显示
+      fullscreen: false, // 是否是全屏
+      scrollSide: '', // 哪个半栏在滑动
+      lastInsert: '', // 最后一次插入的内容
+      timerId: null, // 定时器id
+      scrolling: true, // 同步滚动
+      editorScrollHeight: 0,
+      // indexLength: 1,
+      // themeName: '',
+      // themeSlideDown: false,
+      // imgSlideDown: false,
+      // imgs: [],
+      // previewImgModal: false,
+      // previewImgSrc: '',
+      // previewImgMode: '',
     };
   },
   mounted() {
@@ -220,296 +310,15 @@ export default {
         insertContent: this.insertContent,
       });
     },
-    // 绑定监听事件
-    addEditorLintener() {
-      const editor = this.editor;
-      editor.on('change', (data) => {
-        this.lastPos = editor.getCursor();
-        this.currentValue = editor.getValue();
-        const {
-          doc: { height },
-        } = data;
-        this.editorScrollHeight = height;
-      });
-      editor.on('scroll', this.markdownScroll);
-      editor.on('paste', this.handlePaste);
-      editor.on('keydown', (data, e) => {
-        if (e.keyCode === 83) {
-          if (e.metaKey || e.ctrlKey) {
-            e.preventDefault();
-            this.handleSave();
-          }
-        } else if (e.keyCode === 13) {
-          this.listerenKeyupEnter(e);
-        } else if (e.keyCode === 8) {
-          this.listerenDelete(data);
-        }
-      });
-      editor.on('focus', () => {
-        this.lastPos = editor.getCursor();
-      });
-    },
-    // 插入文本
-    insertContent(str) {
-      this.editor.replaceSelection(str);
-      this.lastInsert = str.replace(/\n/g, '');
-    },
-    // 设置焦点
-    setCursor(line = 0, ch = 0) {
-      const { editor } = this;
-      editor.setCursor(line, ch);
-      editor.focus();
-    },
-    // 粗体
-    insertStrong() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('**' + selection + '**');
-      } else {
-        this.insertContent('****');
-        this.setCursor(line, ch + 2);
-      }
-    },
-    // 斜体
-    insertItalic() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('*' + selection + '*');
-      } else {
-        this.insertContent('**');
-        this.setCursor(line, ch + 1);
-      }
-    },
-    // 下划线
-    insertUnderline() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('<u>' + selection + '</u>');
-      } else {
-        this.insertContent('<u></u>');
-        this.setCursor(line, ch + 3);
-      }
-    },
-    // 删除线
-    insertOverline() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('~~' + selection + '~~');
-      } else {
-        this.insertContent('~~~~');
-        this.setCursor(line, ch + 2);
-      }
-    },
-    // 插入标题
-    insertTitle(level) {
-      const titles = {
-        1: '#  ',
-        2: '##  ',
-        3: '###  ',
-        4: '####  ',
-        5: '#####  ',
-        6: '######  ',
+  },
+  computed: {
+    // tools 里的属性都用来通过配置判断对应功能是否在在顶部栏生效
+    tools() {
+      const { toolbars = {} } = this;
+      return {
+        ...defaultTools,
+        ...toolbars,
       };
-      const { editor, lastPos = {} } = this;
-      const { line } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n' + titles[level] + selection + '\n');
-      } else {
-        const title = titles[level];
-        if (editor.isClean()) {
-          this.insertContent(title);
-          this.setCursor(0, title.length);
-        } else {
-          this.insertContent('\n' + title);
-          this.setCursor(line + 1, title.length);
-        }
-      }
-    },
-    // 插入分割线
-    insertLine() {
-      const { editor } = this;
-      if (editor.isClean()) {
-        this.insertContent('----\n');
-      } else {
-        this.insertContent('\n\n----\n');
-      }
-    },
-    // 引用
-    insertQuote() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n>  ' + selection + '\n\n');
-      } else {
-        if (editor.isClean()) {
-          this.insertContent('>  ');
-          this.setCursor(0, 3);
-        } else {
-          this.insertContent('\n>  ');
-          this.setCursor(line + 1, 3);
-        }
-      }
-    },
-    // 无序列表
-    insertUl() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n-  ' + selection + '\n\n');
-      } else {
-        if (editor.isClean() || ch === 0) {
-          this.insertContent('-  ');
-          this.setCursor(line, 3);
-        } else {
-          this.insertContent('\n-  ');
-          this.setCursor(line + 1, 3);
-        }
-      }
-    },
-    // 有序列表
-    insertOl() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n1.  ' + selection + '\n\n');
-      } else {
-        if (editor.isClean() || ch === 0) {
-          this.insertContent('1.  ');
-          this.setCursor(line, 4);
-        } else {
-          this.insertContent('\n1.  ');
-          this.setCursor(line + 1, 4);
-        }
-      }
-    },
-    // 插入code
-    insertCode() {
-      const { editor, lastPos = {} } = this;
-      const { line } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n```\n' + selection + '\n```\n');
-      } else {
-        if (editor.isClean()) {
-          this.insertContent('```\n\n```');
-          this.setCursor(1, 0);
-        } else {
-          this.insertContent('\n```\n\n```');
-          this.setCursor(line + 2, 0);
-        }
-      }
-    },
-    // 已完成列表
-    insertFinished() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n- [x] ' + selection + '\n\n');
-      } else {
-        if (editor.isClean() || ch === 0) {
-          this.insertContent('- [x] ');
-          this.setCursor(line, 6);
-        } else {
-          this.insertContent('\n- [x] ');
-          this.setCursor(line + 1, 6);
-        }
-      }
-    },
-    // 未完成列表
-    insertNotFinished() {
-      const { editor, lastPos = {} } = this;
-      const { line = 0, ch = 0 } = lastPos;
-      const selection = editor.getSelection();
-      if (selection) {
-        this.insertContent('\n- [ ] ' + selection + '\n\n');
-      } else {
-        if (editor.isClean() || ch === 0) {
-          this.insertContent('- [ ] ');
-          this.setCursor(line, 6);
-        } else {
-          this.insertContent('\n- [ ] ');
-          this.setCursor(line + 1, 6);
-        }
-      }
-    },
-    // 回车事件
-    listerenKeyupEnter(e) {
-      const { lastInsert } = this;
-      if (lastInsert) {
-        const list = ['-', '- [ ]', '- [x]'];
-        if (list.includes(lastInsert.trim())) {
-          e.preventDefault();
-          this.insertContent('\n' + lastInsert);
-        } else if (/^\d+\.$/.test(lastInsert.trim())) {
-          e.preventDefault();
-          this.insertContent('\n' + (parseInt(lastInsert, 0) + 1) + '.  ');
-        }
-      }
-    },
-    // 删除 backup
-    listerenDelete() {
-      setTimeout(() => {
-        const { editor } = this;
-        if (!editor.isClean()) {
-          const value = editor.getValue();
-          if (value.split('\n').pop() === '') {
-            this.lastInsert = '';
-          }
-        }
-      }, 20);
-    },
-    // 删除时,以回车为界分割，如果数组最后一个元素为''时，将行一次插入的共嗯那个置为空，避免回车时再次插入
-    onDelete() {
-      const lines = this.currentValue.split('\n');
-      if (lines[lines.length - 1] === '') {
-        this.lastInsert = '';
-      }
-    },
-    // 编辑器区域滚动
-    markdownScroll(data = {}) {
-      if (this.scrolling && this.scrollSide === 'left') {
-        const {
-          doc: { height, scrollTop },
-        } = data;
-        const preview = this.$refs.preview;
-        const contentHeight = preview.offsetHeight;
-        const previewScrollHeight = preview.scrollHeight;
-        preview.scrollTop = parseInt((scrollTop * (previewScrollHeight - contentHeight)) / (height - contentHeight), 0);
-      }
-    },
-    // 预览内容区域滚动
-    previewScroll() {
-      if (this.scrolling && this.scrollSide === 'right') {
-        const preview = this.$refs.preview;
-        const contentHeight = preview.offsetHeight;
-        const previewScrollHeight = preview.scrollHeight;
-        const previewScrollTop = preview.scrollTop;
-        const scrollTop = parseInt(
-          (previewScrollTop * (this.editorScrollHeight - contentHeight)) / (previewScrollHeight - contentHeight),
-          0
-        );
-        this.editor.scrollTo(0, scrollTop);
-      }
-    },
-    redo() {
-      const { editor } = this;
-      editor.redo();
-      setTimeout(() => {
-        editor.refresh();
-      }, 20);
     },
   },
   watch: {

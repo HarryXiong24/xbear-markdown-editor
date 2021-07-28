@@ -1,121 +1,10 @@
-import defaultTools from '@/config/tools';
-
 export default {
-  props: {
-    value: {
-      type: [String, Number],
-      default: '',
-    },
-    theme: {
-      // 默认主题
-      type: String,
-      default: 'light',
-    },
-    width: {
-      // 初始化宽度
-      type: [Number, String],
-      default: 'auto',
-    },
-    height: {
-      // 初始化高度
-      type: Number,
-      default: 600,
-    },
-    toolbars: {
-      // 工具栏
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    bordered: {
-      //是否有边框
-      type: Boolean,
-      default: true,
-    },
-    autoSave: {
-      // 是否自动保存
-      type: Boolean,
-      default: false,
-    },
-    interval: {
-      // 自动保存间隔 mm
-      type: Number,
-      default: 10000,
-    },
-    exportFileName: {
-      // 默认导出文件名称
-      type: String,
-      default: 'unnamed',
-    },
-    markedOptions: {
-      //marked.js配置项
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    copyCode: {
-      // 复制代码
-      type: Boolean,
-      default: true,
-    },
-    copyBtnText: {
-      // 复制代码按钮文字
-      type: String,
-      default: '复制代码',
-    },
-    isPreview: {
-      //是否是预览模式
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      currentValue: '', // 输入框内容
-      timeoutId: null,
-      indexLenth: 1,
-      html: '', // 预览的html
-      preview: false, // 是否是预览状态
-      split: true, //分屏显示
-      fullscreen: false, // 是否是全屏
-      scrollSide: '', // 哪个半栏在滑动
-      lastInsert: '', // 最后一次插入的内容
-      timerId: null, // 定时器id
-      scrolling: true, // 同步滚动
-      editorScrollHeight: 0,
-      // themeName: '',
-      // themeSlideDown: false,
-      // imgSlideDown: false,
-      // imgs: [],
-      // previewImgModal: false,
-      // previewImgSrc: '',
-      // previewImgMode: '',
-    };
-  },
-  computed: {
-    // tools 里的属性都用来通过配置判断对应功能是否在在顶部栏生效
-    tools() {
-      const { toolbars = {} } = this;
-      return {
-        ...defaultTools,
-        ...toolbars,
-      };
-    },
-  },
   methods: {
-    // 插入链接
-    insertLink() {
-      this.insertContent('\n[link](href)');
-    },
-    // 插入图片
-    insertImage() {
-      this.insertContent('\n![image](imgUrl)');
-    },
-    // 插入表格
-    insertTable() {
-      this.insertContent('\nheader 1 | header 2\n---|---\nrow 1 col 1 | row 1 col 2\nrow 2 col 1 | row 2 col 2\n\n');
+    // 设置焦点
+    setCursor(line = 0, ch = 0) {
+      const { editor } = this;
+      editor.setCursor(line, ch);
+      editor.focus();
     },
     // 保存操作
     handleSave() {
@@ -126,18 +15,47 @@ export default {
         html,
       });
     },
+    // 绑定监听事件
+    addEditorLintener() {
+      const editor = this.editor;
+      editor.on('change', (data) => {
+        this.lastPos = editor.getCursor();
+        this.currentValue = editor.getValue();
+        const {
+          doc: { height },
+        } = data;
+        this.editorScrollHeight = height;
+      });
+      editor.on('scroll', this.markdownScroll);
+      editor.on('paste', this.handlePaste);
+      editor.on('keydown', (data, e) => {
+        if (e.keyCode === 83) {
+          if (e.metaKey || e.ctrlKey) {
+            e.preventDefault();
+            this.handleSave();
+          }
+        } else if (e.keyCode === 13) {
+          this.listerenKeyupEnter(e);
+        } else if (e.keyCode === 8) {
+          this.listerenDelete(data);
+        }
+      });
+      editor.on('focus', () => {
+        this.lastPos = editor.getCursor();
+      });
+    },
     // 设置究竟是哪个半边在主动滑动
-    mousescrollSide(side) {
+    mouseScrollSide(side) {
       this.scrollSide = side;
     },
     // 监听复制操作
     addCopyListener() {
       setTimeout(() => {
-        const btns = document.querySelectorAll('.code-block .copy-code');
-        this.btns = btns;
-        for (let i = 0, len = btns.length; i < len; i++) {
-          btns[i].onclick = () => {
-            const code = btns[i].parentNode.querySelectorAll('pre')[0].innerText;
+        const buttons = document.querySelectorAll('.code-block .copy-code');
+        this.buttons = buttons;
+        for (let i = 0, len = buttons.length; i < len; i++) {
+          buttons[i].onclick = () => {
+            const code = buttons[i].parentNode.querySelectorAll('pre')[0].innerText;
             const aux = document.createElement('input');
             aux.setAttribute('value', code);
             document.body.appendChild(aux);
@@ -148,6 +66,73 @@ export default {
           };
         }
       }, 600);
+    },
+    // 编辑器区域滚动
+    markdownScroll(data = {}) {
+      if (this.scrolling && this.scrollSide === 'left') {
+        const {
+          doc: { height, scrollTop },
+        } = data;
+        const preview = this.$refs.preview;
+        const contentHeight = preview.offsetHeight;
+        const previewScrollHeight = preview.scrollHeight;
+        preview.scrollTop = parseInt((scrollTop * (previewScrollHeight - contentHeight)) / (height - contentHeight), 0);
+      }
+    },
+    // 预览内容区域滚动
+    previewScroll() {
+      if (this.scrolling && this.scrollSide === 'right') {
+        const preview = this.$refs.preview;
+        const contentHeight = preview.offsetHeight;
+        const previewScrollHeight = preview.scrollHeight;
+        const previewScrollTop = preview.scrollTop;
+        const scrollTop = parseInt(
+          (previewScrollTop * (this.editorScrollHeight - contentHeight)) / (previewScrollHeight - contentHeight),
+          0
+        );
+        this.editor.scrollTo(0, scrollTop);
+      }
+    },
+    // 撤销操作
+    redo() {
+      const { editor } = this;
+      editor.redo();
+      setTimeout(() => {
+        editor.refresh();
+      }, 20);
+    },
+    // 回车事件
+    listerenKeyupEnter(e) {
+      const { lastInsert } = this;
+      if (lastInsert) {
+        const list = ['-', '- [ ]', '- [x]'];
+        if (list.includes(lastInsert.trim())) {
+          e.preventDefault();
+          this.insertContent('\n' + lastInsert);
+        } else if (/^\d+\.$/.test(lastInsert.trim())) {
+          e.preventDefault();
+          this.insertContent('\n' + (parseInt(lastInsert, 0) + 1) + '.  ');
+        }
+      }
+    },
+    // 删除 backup
+    listerenDelete() {
+      setTimeout(() => {
+        const { editor } = this;
+        if (!editor.isClean()) {
+          const value = editor.getValue();
+          if (value.split('\n').pop() === '') {
+            this.lastInsert = '';
+          }
+        }
+      }, 20);
+    },
+    // 删除时,以回车为界分割，如果数组最后一个元素为''时，将行一次插入的共嗯那个置为空，避免回车时再次插入
+    onDelete() {
+      const lines = this.currentValue.split('\n');
+      if (lines[lines.length - 1] === '') {
+        this.lastInsert = '';
+      }
     },
   },
   // 销毁时清除定时器
