@@ -1,8 +1,6 @@
-import { importFile, exportFile } from '@/utils/file';
 import defaultTools from '@/config/tools';
 
 export default {
-  name: 'markdown',
   props: {
     value: {
       type: [String, Number],
@@ -83,17 +81,17 @@ export default {
       split: true, //分屏显示
       fullscreen: false, // 是否是全屏
       scrollSide: '', // 哪个半栏在滑动
-      lastInsert: '', //最后一次插入的内容
+      lastInsert: '', // 最后一次插入的内容
       timerId: null, // 定时器id
-      themeName: '',
-      themeSlideDown: false,
-      imgSlideDown: false,
-      imgs: [],
       scrolling: true, // 同步滚动
       editorScrollHeight: 0,
-      previewImgModal: false,
-      previewImgSrc: '',
-      previewImgMode: '',
+      // themeName: '',
+      // themeSlideDown: false,
+      // imgSlideDown: false,
+      // imgs: [],
+      // previewImgModal: false,
+      // previewImgSrc: '',
+      // previewImgMode: '',
     };
   },
   computed: {
@@ -128,94 +126,9 @@ export default {
         html,
       });
     },
-    // 显示主题选项
-    toggleSlideDown() {
-      this.slideDown = !this.slideDown;
-    },
-    // 设置主题
-    setThemes(name) {
-      this.themeName = name;
-      this.themeSlideDown = false;
-      this.$emit('on-theme-change', name);
-    },
-    // 导出md格式文件
-    exportFile() {
-      exportFile(this.currentValue, this.exportFileName + '.md');
-    },
-    // 导入文件
-    importFile(event) {
-      importFile(event);
-    },
     // 设置究竟是哪个半边在主动滑动
     mousescrollSide(side) {
       this.scrollSide = side;
-    },
-    // 监听查看大图
-    addImageClickListener() {
-      const { imgs = [] } = this;
-      if (imgs.length > 0) {
-        for (let i = 0, len = imgs.length; i < len; i++) {
-          imgs[i].onclick = null;
-        }
-      }
-      setTimeout(() => {
-        this.imgs = this.$refs.preview.querySelectorAll('img');
-        for (let i = 0, len = this.imgs.length; i < len; i++) {
-          this.imgs[i].onclick = () => {
-            const src = this.imgs[i].getAttribute('src');
-            this.previewImage(src);
-          };
-        }
-      }, 600);
-    },
-    // 粘贴图片
-    handlePaste(_, e) {
-      const { clipboardData = {} } = e;
-      const { types = [], items } = clipboardData;
-      let item = null;
-      for (let i = 0; i < types.length; i++) {
-        if (types[i] === 'Files') {
-          item = items[i];
-          break;
-        }
-      }
-      if (item) {
-        const file = item.getAsFile();
-        if (/image/gi.test(file.type)) {
-          this.$emit('on-upload-image', file);
-          e.preventDefault();
-        }
-      }
-    },
-    // 预览图片
-    previewImage(src) {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-        if (height / width > 1.4) {
-          this.previewImgMode = 'horizontal';
-        } else {
-          this.previewImgMode = 'vertical';
-        }
-        this.previewImgSrc = src;
-        this.previewImgModal = true;
-      };
-    },
-    // 选择图片
-    chooseImage() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = () => {
-        const files = input.files;
-        if (files[0]) {
-          this.$emit('on-upload-image', files[0]);
-          input.value = '';
-        }
-      };
-      input.click();
     },
     // 监听复制操作
     addCopyListener() {

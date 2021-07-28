@@ -160,13 +160,19 @@ import '@/assets/js/codemirror/mode/javascript';
 import '@/assets/js/codemirror/mode/markdown';
 import codemirrorConfig from '@/assets/js/codemirror/config';
 import '@/assets/js/codemirror/styles/codemirror.css';
-// 调用自己的模块
-import common from '@/mixins/common';
+
+// 调用混入的模块
+import base from '@/mixins/base';
+import themeOperation from '@/mixins/themeOperation';
+import imageOperation from '@/mixins/imageOperation';
+import fileOperation from '@/mixins/fileOperation';
+
+// 调用配置的模块
 import marked from '@/config/marked';
 
 export default {
   name: 'xbear-markdown-editor',
-  mixins: [common],
+  mixins: [base, themeOperation, imageOperation, fileOperation],
   data() {
     return {
       pro: true,
