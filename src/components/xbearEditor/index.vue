@@ -714,6 +714,7 @@ export default {
     .markdown-preview {
       flex: 1;
       height: 100%;
+      margin-top: -24px;
     }
   }
 }
