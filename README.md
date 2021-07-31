@@ -11,34 +11,39 @@
 </p>
 
 ## :pushpin: Introduction
-  
+
 > A markdown editor based on Vue 2.x, Marked and CodeMirror.
 
 多功能 Markdown 编辑器。
-  
+
 ## :triangular_ruler: Usage
 
 ### Install
 
 #### npm
-``` bash
+
+```bash
 npm install xbear
 ```
 
 #### yarn
-``` bash
+
+```bash
 yarn add xbear
 ```
 
 ### Use as plugins in Vue projects
 
 #### main.js
-``` js
+
+```js
 import XBearEditor from '../packages/index';
 Vue.use(XBearEditor);
 ```
+
 #### app.vue
-``` vue
+
+```vue
 <template>
   <div id="app">
     <xbear-editor></xbear-editor>
@@ -47,12 +52,11 @@ Vue.use(XBearEditor);
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
 };
 </script>
 
-<style>
-</style>
+<style></style>
 ```
 
 ### More functions
@@ -70,7 +74,7 @@ To check out docs, visit [xbear docs]().
 ## :heartpulse: Contributor
 
 - [Harry Xiong](https://github.com/harryxiong24)
-  
+
 ## :memo: License
 
 Copyright © 2021-present [Harry Xiong](https://github.com/harryxiong24).<br />
