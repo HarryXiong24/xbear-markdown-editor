@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <!--    预览图片-->
+    <!-- 预览图片-->
     <div :class="['preview-img', previewImgModal ? 'active' : '']">
       <span class="close icon-close iconfont" @click="previewImgModal = false"></span>
       <img :src="previewImgSrc" :class="[previewImgMode]" alt="" />
