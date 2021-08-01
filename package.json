@@ -15,8 +15,7 @@
   },
   "keywords": [
     "vue 2.x",
-    "markdown",
-    "editor"
+    "markdown editor"
   ],
   "scripts": {
     "serve": "vue-cli-service serve",
