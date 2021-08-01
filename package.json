@@ -1,7 +1,7 @@
 {
   "name": "xbear-editor",
   "description": "A markdown editor based on Vue 2.x, Marked and CodeMirror.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "lib/XBearEditor.umd.min.js",
   "private": false,
   "author": {
