@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- 导入 xbear-editor -->
     <xbear-editor
       v-model="val"
       @on-ready="onReady"
@@ -12,6 +13,7 @@
 </template>
 
 <script>
+// xbear-editor API 使用演示
 export default {
   name: 'App',
   data: function () {
