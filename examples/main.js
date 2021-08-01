@@ -1,7 +1,13 @@
 import Vue from 'vue';
 import App from './App.vue';
-import XBearEditor from '../packages/index';
-Vue.use(XBearEditor);
+
+// 按需引入
+import { XBearEditor } from '../packages/index';
+Vue.component(XBearEditor.name, XBearEditor);
+
+// 全局引入
+// import XBearEditor from '../packages/index';
+// Vue.use(XBearEditor);
 
 Vue.config.productionTip = false;
 

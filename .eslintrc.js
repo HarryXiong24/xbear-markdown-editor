@@ -1,3 +1,4 @@
+// 配置项
 module.exports = {
   root: true,
   env: {

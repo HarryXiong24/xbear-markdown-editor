@@ -1,4 +1,4 @@
-// vue.config.js
+// vue-cli 配置项
 module.exports = {
   // 将 examples 目录添加为新的页面
   pages: {
