@@ -1,4 +1,4 @@
-<h1 align="center">xbear-markdown-editor</h1>
+<h1 align="center">XBear Markdown Editor</h1>
 
 <p align="center">
   <img alt="Version" src="https://img.shields.io/github/package-json/v/harryxiong24/xbear-markdown-editor" />
@@ -23,7 +23,7 @@
 #### npm
 
 ```bash
-npm install xbear-editor
+npm install xbear-editor -S
 ```
 
 #### yarn

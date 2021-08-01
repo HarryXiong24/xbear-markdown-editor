@@ -1,7 +1,13 @@
-<!--
- * @Description: 
- * @Version: 
- * @Author: HarryXiong
- * @Date: 2021-08-01 16:58:44
- * @LastEditTime: 2021-08-01 16:58:45
--->
+# 安装
+
+## npm
+
+``` bash
+npm install xbear-editor -S
+```
+
+## yarn
+
+``` bash
+yarn add xbear-editor
+```

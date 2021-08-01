@@ -4,7 +4,7 @@ heroImage: /xbear.png
 heroText: XBear Markdown Editor
 tagline: A markdown editor based on Vue 2.x, Marked and CodeMirror.
 actionText: Quick Start →
-actionLink: /guide/intro
+actionLink: /guide/
 features:
 - title: 快速使用
   details: 便捷导入, 在您的 Vue 项目中轻松嵌入 MarkDown 编辑器。

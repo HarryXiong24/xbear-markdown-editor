@@ -11,53 +11,50 @@ module.exports = {
     logo: '/xbear.png',
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide/intro' },
-      { text: 'API', link: '/api/props' },
+      { text: 'Guide', link: '/guide/' },
+      { text: 'API', link: '/api/' },
       { text: 'GitHub', link: 'https://github.com/HarryXiong24/xbear-markdown-editor' },
     ],
     sidebar: {
       '/guide/': [
         {
           title: "起步",
-          path: 'intro',
           collapsable: false,
           sidebarDepth: 1,
           children: [
-            ['intro', '介绍'],  //菜单名称为'子菜单1'，跳转至/pages/folder1/test1.md
+            ['', '介绍'], 
             ['install', '安装'],
             ['usage', '使用']
           ] 
         },
         {
           title: "深入",
-          path: 'structure',
           collapsable: false,
           sidebarDepth: 1,
           children: [
-            ['structure', '项目结构'],  
+            ['structure', '组件'],  
             ['config', '配置文件'],
             ['mixins', '混入文件']
           ] 
         },
         {
           title: "可扩展",
-          path: 'extend',
           collapsable: false,
           sidebarDepth: 1,
           children: [
-            ['extend', '项目结构'],  
+            ['extend', '组件设计架构'],  
             ['config', '配置文件'],
-            ['config', '使用']
+            ['mixins', '使用']
           ] 
         }
       ],
       '/api/': [
         {
           title: "API",
-          path: 'props',
           collapsable: false,
           sidebarDepth: 1,
           children: [
+            ['', '概括'],
             ['props', 'Props'], 
             ['events', 'Events']
           ] 
