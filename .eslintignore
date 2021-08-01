@@ -1,4 +1,5 @@
 build/*.js
+.vscode
 src/assets
 packages/XBearEditor/src/assets
 public
