@@ -131,13 +131,13 @@
 
     <!-- 编辑器 -->
     <div class="markdown-content" :style="{ background: preview ? '#fff' : '' }">
-      <div class="codemirror" ref="codemirror" v-show="!preview" @mouseenter="mousescrollSide('left')"></div>
+      <div class="codemirror" ref="codemirror" v-show="!preview" @mouseenter="mouseScrollSide('left')"></div>
       <div
         v-show="preview ? preview : split"
         :class="`markdown-preview ${'markdown-theme-' + themeName}`"
         ref="preview"
         @scroll="previewScroll"
-        @mouseenter="mouseScrollSide('right')"
+        @mouseenter="('right')"
       >
         <div v-html="html" ref="previewInner"></div>
       </div>
