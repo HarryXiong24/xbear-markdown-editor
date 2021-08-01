@@ -23,13 +23,13 @@
 #### npm
 
 ```bash
-npm install xbear
+npm install xbear-editor
 ```
 
 #### yarn
 
 ```bash
-yarn add xbear
+yarn add xbear-editor
 ```
 
 ### Use as plugins in Vue projects
@@ -37,14 +37,14 @@ yarn add xbear
 #### import
 
 ```js
-import XBearEditor from '../packages/index';
+import XBearEditor from 'xbear-editor';
 Vue.use(XBearEditor);
 ```
 
 #### import modularized
 
 ```js
-import { XBearEditor } from '../packages/index';
+import { XBearEditor } from 'xbear-editor';
 Vue.component(XBearEditor.name, XBearEditor);
 ```
 
