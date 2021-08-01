@@ -1,0 +1,66 @@
+{
+  // tab 大小为2个空格
+  "editor.tabSize": 2,
+  "editor.fontSize": 14,
+  "files.autoSave": "afterDelay",
+
+  // 100 列后换行
+  "editor.wordWrapColumn": 120,
+
+  // 开启 vscode 文件路径导航
+  "breadcrumbs.enabled": true,
+
+  // prettier 设置语句末尾加分号
+  "prettier.semi": false,
+
+  // prettier 设置强制单引号
+  "prettier.singleQuote": true,
+  // 选择 vue 文件中 template 的格式化工具
+  "vetur.format.defaultFormatter.html": "prettier",
+
+  // 显示 markdown 中英文切换时产生的特殊字符
+  "editor.renderControlCharacters": true,
+
+  // 让函数(名)和后面的括号之间加个空格
+  "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+
+  // 让vue中的js按编辑器自带的ts格式进行格式化
+  // "vetur.format.defaultFormatter.js": "vscode-typescript",
+
+  // vetur 的自定义设置
+  "vetur.format.defaultFormatterOptions": {
+    "prettier": {
+      "singleQuote": true,
+      "semi": false
+    }
+  },
+
+  // Ctrl + Shift + F 快捷键设置（依照vetur格式化代码）
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur"
+  },
+  "files.associations": {
+    "*.js": "javascriptreact"
+  },
+  // 使能每一种语言默认格式化规则
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  /*  prettier的配置 */
+  "prettier.printWidth": 100, // 超过最大值换行
+  "prettier.tabWidth": 4, // 缩进字节数
+  "prettier.useTabs": false, // 缩进不使用tab，使用空格
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnType": true,
+  // 保存时格式化
+  "editor.formatOnSave": true
+}
