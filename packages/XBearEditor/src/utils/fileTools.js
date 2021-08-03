@@ -17,7 +17,7 @@ export function exportFile(fileData, name) {
 /*
  * 导入本地文件
  */
-export function importFile(event) {
+export function importFile(event, value, editor) {
   const file = event.target.files[0];
   if (!file) {
     return;
@@ -31,9 +31,9 @@ export function importFile(event) {
     encoding: 'utf-8',
   });
   reader.onload = () => {
-    this.currentValue = reader.result;
+    value = reader.result;
     event.target.value = '';
-    this.editor.setOption('value', this.currentValue);
+    editor.setOption('value', value);
   };
   reader.onerror = (err) => {
     console.error(err);

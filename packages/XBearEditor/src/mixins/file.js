@@ -8,7 +8,7 @@ export default {
     },
     // 导入文件
     importFile(event) {
-      importFile(event);
+      importFile(event, this.currentValue, this.editor);
     },
   },
 };
